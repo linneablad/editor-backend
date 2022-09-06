@@ -8,6 +8,7 @@ To handle documents use the route "/", it has implementations for GET, POST, PUT
     npm install nodemon --save
     npm install mongodb --save
     npm install express cors morgan --save
+    npm install dotenv --save
 
 ## Start api: 
 
