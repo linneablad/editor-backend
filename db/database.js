@@ -1,13 +1,17 @@
 const mongo = require("mongodb").MongoClient;
-const dbName = "editor";
+let dbName = "editor";
 const collectionName = "docs";
 
 const database = {
-    getDb: async function getDb () {
-        let dsn = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.53mc4an.mongodb.net/?retryWrites=true&w=majority`
+    getDb: async function getDb() {
+        const usern = process.env.ATLAS_USERNAME;
+        const passw = process.env.ATLAS_PASSWORD;
+        let dsn =
+        `mongodb+srv://${usern}:${passw}@cluster0.53mc4an.mongodb.net/?retryWrites=true&w=majority`;
 
         if (process.env.NODE_ENV === 'test') {
-            dsn = "mongodb://localhost:27017/test";
+            dsn = "mongodb://localhost:27017";
+            dbName = "test";
         }
 
         const client  = await mongo.connect(dsn, {

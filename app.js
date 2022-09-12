@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require('morgan');
@@ -7,7 +7,7 @@ const cors = require('cors');
 const docs = require('./routes/docs');
 
 const app = express();
-const port = process.env.PORT || 1337;
+const port = 1337;
 
 app.use(cors()); //Enable clients from other domains to fetch data from api
 
@@ -36,8 +36,10 @@ app.use('/', docs);
 // Put this last
 app.use((req, res, next) => {
     var err = new Error("Not Found");
+
     err.status = 404;
-    next(err); //Send to the next middleware or default error handling to display error message if last 
+    //Send to the next middleware or default error handling to display error message if last
+    next(err);
 });
 
 //My own error handler
@@ -58,4 +60,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start up server
-app.listen(port, () => console.log(`Example API listening on port ${port}!`));
+const server = app.listen(port, () => console.log(`Example API listening on port ${port}!`));
+
+module.exports = server;
