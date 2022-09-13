@@ -7,7 +7,7 @@ const cors = require('cors');
 const docs = require('./routes/docs');
 
 const app = express();
-const port = 1337;
+const port = process.env.PORT || 1337;
 
 app.use(cors()); //Enable clients from other domains to fetch data from api
 
