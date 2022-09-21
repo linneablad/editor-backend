@@ -8,11 +8,10 @@ const socketModel = require('./models/socketModel');
 
 const app = express();
 const port = process.env.PORT || 1337;
-const url = port === 1337 ? "http://localhost:3000" : "http://www.student.bth.se/~liba19/editor/";
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
     cors: {
-        origin: url
+        origin: "*"
     }
 });
 
