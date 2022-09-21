@@ -3,11 +3,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require('morgan');
 const cors = require('cors');
-
 const docs = require('./routes/docs');
+const socketModel = require('./models/socketModel');
 
 const app = express();
 const port = process.env.PORT || 1337;
+const url = port === 1337 ? "http://localhost:3000" : "http://www.student.bth.se/~liba19/editor/";
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: url
+    }
+});
+
+socketModel.connect(io);
 
 app.use(cors()); //Enable clients from other domains to fetch data from api
 
@@ -60,6 +69,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start up server
-const server = app.listen(port, () => console.log(`Example API listening on port ${port}!`));
+const server = httpServer.listen(port, () => console.log(`Example API listening on port ${port}!`));
 
 module.exports = server;

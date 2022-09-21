@@ -79,57 +79,57 @@ describe('Documents', () => {
                 });
         });
     });
-    describe('PUT /', () => {
-        it('Should return status 204', (done) => {
-            const data = {
-                _id: ObjectId(docId),
-                name: "Test2-changed",
-                content: "Test2-text-changed"
-            };
+    // describe('PUT /', () => {
+    //     it('Should return status 204', (done) => {
+    //         const data = {
+    //             _id: ObjectId(docId),
+    //             name: "Test2-changed",
+    //             content: "Test2-text-changed"
+    //         };
 
-            chai.request(server)
-                .put("/")
-                .send(data)
-                .end((err, res) => {
-                    res.should.have.status(204);
+    //         chai.request(server)
+    //             .put("/")
+    //             .send(data)
+    //             .end((err, res) => {
+    //                 res.should.have.status(204);
 
-                    done();
-                });
-        });
-        it(`Should return status 200 and an array of length 1,
-            where the document has the newly updated values`, (done) => {
-            chai.request(server)
-                .get("/")
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.an("object");
-                    res.body.data.should.be.an("array");
-                    res.body.data.should.have.lengthOf(1);
-                    res.body.data[0].should.have.property("_id");
-                    res.body.data[0]._id.should.be.equal(docId);
-                    res.body.data[0].should.have.property("name");
-                    res.body.data[0].name.should.be.equal("Test2-changed");
-                    res.body.data[0].should.have.property("content");
-                    res.body.data[0].content.should.be.equal("Test2-text-changed");
-                    done();
-                });
-        });
-        it('Should return status 500 and error message when no id is provided', (done) => {
-            chai.request(server)
-                .put("/")
-                .end((err, res) => {
-                    res.should.have.status(500);
-                    res.body.should.be.an("object");
-                    res.body.errors.should.be.an("object");
-                    res.body.errors.should.have.property("status");
-                    res.body.errors.should.have.property("source");
-                    res.body.errors.should.have.property("title");
-                    res.body.errors.should.have.property("detail");
+    //                 done();
+    //             });
+    //     });
+    //     it(`Should return status 200 and an array of length 1,
+    //         where the document has the newly updated values`, (done) => {
+    //         chai.request(server)
+    //             .get("/")
+    //             .end((err, res) => {
+    //                 res.should.have.status(200);
+    //                 res.body.should.be.an("object");
+    //                 res.body.data.should.be.an("array");
+    //                 res.body.data.should.have.lengthOf(1);
+    //                 res.body.data[0].should.have.property("_id");
+    //                 res.body.data[0]._id.should.be.equal(docId);
+    //                 res.body.data[0].should.have.property("name");
+    //                 res.body.data[0].name.should.be.equal("Test2-changed");
+    //                 res.body.data[0].should.have.property("content");
+    //                 res.body.data[0].content.should.be.equal("Test2-text-changed");
+    //                 done();
+    //             });
+    //     });
+    //     it('Should return status 500 and error message when no id is provided', (done) => {
+    //         chai.request(server)
+    //             .put("/")
+    //             .end((err, res) => {
+    //                 res.should.have.status(500);
+    //                 res.body.should.be.an("object");
+    //                 res.body.errors.should.be.an("object");
+    //                 res.body.errors.should.have.property("status");
+    //                 res.body.errors.should.have.property("source");
+    //                 res.body.errors.should.have.property("title");
+    //                 res.body.errors.should.have.property("detail");
 
-                    done();
-                });
-        });
-    });
+    //                 done();
+    //             });
+    //     });
+    // });
     describe('DELETE /', () => {
         it('Should return status 204', (done) => {
             const data = {
