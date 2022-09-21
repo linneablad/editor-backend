@@ -1,5 +1,4 @@
 const docsModel = require('./docsModel');
-let throttleTimer;
 
 const socketModel = {
     connect: async function (io) {
@@ -21,13 +20,7 @@ const socketModel = {
     editDoc: function (socket) {
         socket.on("editDoc", document => {
             socket.to(document._id).emit("editDoc", document);
-
-            clearTimeout(throttleTimer);
-            console.log("Writing");
-            throttleTimer = setTimeout(function() {
-                console.log("Save to database");
-                docsModel.updateDoc(document._id, document.name, document.content);
-            }, 2000);
+            docsModel.updateDoc(document._id, document.name, document.content);
         });
     },
     disconnect: function(socket) {
