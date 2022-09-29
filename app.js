@@ -4,7 +4,9 @@ const bodyParser = require("body-parser");
 const morgan = require('morgan');
 const cors = require('cors');
 const docs = require('./routes/docs');
+const auth = require('./routes/auth');
 const socketModel = require('./models/socketModel');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const port = process.env.PORT || 1337;
@@ -17,7 +19,11 @@ const io = require("socket.io")(httpServer, {
 
 socketModel.connect(io);
 
-app.use(cors()); //Enable clients from other domains to fetch data from api
+app.use(cors({
+    origin: "http://www.student.bth.se",
+    credentials: true,
+    // origin: "http://localhost:3000",
+})); //Enable clients from other domains to fetch data from api
 
 // don't show the log when it is test
 if (process.env.NODE_ENV !== 'test') {
@@ -37,7 +43,10 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+app.use(cookieParser());
+
 app.use('/', docs);
+app.use('/', auth);
 
 // Add routes for 404 and error handling
 // Catch 404 and forward to error handler
