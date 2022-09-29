@@ -2,8 +2,6 @@ const database = require("../db/database.js");
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemon = require("nodemon");
-
 const jwtSecret = process.env.JWT_SECRET;
 
 const authModel = {
@@ -78,7 +76,19 @@ const authModel = {
                 let payload = { email: user.email };
                 let jwtToken = jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 
-                response.cookie('token', jwtToken, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000});
+                if (process.env.NODE_ENV !== 'test') {
+                    response.cookie('token', jwtToken, {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'none',
+                        maxAge: 24 * 60 * 60 * 1000
+                    });
+                } else {
+                    response.cookie('token', jwtToken, {
+                        httpOnly: true,
+                        maxAge: 24 * 60 * 60 * 1000
+                    });
+                }
                 return response.json({
                     data: {
                         type: "success",
