@@ -6,7 +6,11 @@ const cors = require('cors');
 const docs = require('./routes/docs');
 const auth = require('./routes/auth');
 const socketModel = require('./models/socketModel');
+const authModel = require('./models/authModel');
 const cookieParser = require('cookie-parser');
+const { graphqlHTTP } = require('express-graphql');
+const { GraphQLSchema } = require("graphql");
+const RootQueryType = require("./graphql/root.js");
 
 const app = express();
 const port = process.env.PORT || 1337;
@@ -22,7 +26,7 @@ socketModel.connect(io);
 app.use(cors({
     origin: "http://www.student.bth.se",
     credentials: true,
-    // origin: "http://localhost:3000",
+    //origin: "http://localhost:3000",
 })); //Enable clients from other domains to fetch data from api
 
 // don't show the log when it is test
@@ -44,6 +48,19 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.use(cookieParser());
+
+const visual = false;
+const schema = new GraphQLSchema({
+    query: RootQueryType
+});
+
+app.use('/graphql',
+    (request, response, next) => authModel.checkToken(request, response, next),
+    graphqlHTTP({
+        schema: schema,
+        graphiql: visual,
+    })
+);
 
 app.use('/', docs);
 app.use('/', auth);

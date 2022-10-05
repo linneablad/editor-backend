@@ -4,11 +4,6 @@ const authModel = require('../models/authModel');
 const express = require('express');
 const router = express.Router();
 
-router.get("/",
-    (request, response, next) => authModel.checkToken(request, response, next),
-    (request, response) => docsModel.getDocs(request, response)
-);
-
 router.post("/",
     (request, response, next) => authModel.checkToken(request, response, next),
     (request, response) => docsModel.newDoc(request, response)

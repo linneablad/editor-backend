@@ -54,8 +54,21 @@ describe('Documents', () => {
                     done();
                 });
         });
-        it(`Should return status 200 and one array of documents with length 0`, (done) => {
+        it(`Should return status 200 and an array of documents with length 0`, (done) => {
             const agent = chai.request.agent(server);
+            const query = {
+                query: `{
+                    documents {
+                        _id,
+                        name,
+                        owner,
+                        content,
+                        allowedUsers {
+                            email
+                            }
+                        }
+                    }`
+            };
 
             agent
                 .post("/login") // to get jwtToken
@@ -63,7 +76,8 @@ describe('Documents', () => {
                 .then((res) => {
                     res.should.have.cookie('token');
                     return agent
-                        .get("/")
+                        .post("/graphql")
+                        .send(query)
                         .then((res) => {
                             res.should.have.status(200);
                             res.body.should.be.an("object");
@@ -113,6 +127,19 @@ describe('Documents', () => {
         it(`Should return status 200 and one array with length 1
             which contains the new document`, (done) => {
             const agent = chai.request.agent(server);
+            const query = {
+                query: `{
+                    documents {
+                        _id,
+                        name,
+                        owner,
+                        content,
+                        allowedUsers {
+                            email
+                            }
+                        }
+                    }`
+            };
 
             agent
                 .post("/login") // to get jwtToken
@@ -120,7 +147,8 @@ describe('Documents', () => {
                 .then((res) => {
                     res.should.have.cookie('token');
                     return agent
-                        .get("/")
+                        .post("/graphql")
+                        .send(query)
                         .then((res) => {
                             res.should.have.status(200);
                             res.body.data.documents.should.have.lengthOf(1);
@@ -176,8 +204,17 @@ describe('Documents', () => {
                 });
         });
         it(`Should return status 200 and one array with length 1 
-            that contains the document with the newly updated values`, (done) => {
+            which contains the document with the newly updated values`, (done) => {
             const agent = chai.request.agent(server);
+            const query = {
+                query: `{
+                    documents {
+                        allowedUsers {
+                            email
+                            }
+                        }
+                    }`
+            };
 
             agent
                 .post("/login") // to get jwtToken
@@ -185,7 +222,8 @@ describe('Documents', () => {
                 .then((res) => {
                     res.should.have.cookie('token');
                     return agent
-                        .get("/")
+                        .post("/graphql")
+                        .send(query)
                         .then((res) => {
                             res.should.have.status(200);
                             const data = res.body.data;
@@ -226,8 +264,15 @@ describe('Documents', () => {
                 });
         });
         it(`Should return status 200 and one array with length 1 
-            that contains the document the user now has access to`, (done) => {
+        and contains the document the user now has access to`, (done) => {
             const agent = chai.request.agent(server);
+            const query = {
+                query: `{
+                documents {
+                    _id
+                }
+            }`
+            };
 
             agent
                 .post("/login") // to get jwtToken
@@ -235,7 +280,8 @@ describe('Documents', () => {
                 .then((res) => {
                     res.should.have.cookie('token');
                     return agent
-                        .get("/")
+                        .post("/graphql")
+                        .send(query)
                         .then((res) => {
                             res.should.have.status(200);
                             res.body.data.documents.should.have.lengthOf(1);
@@ -274,6 +320,13 @@ describe('Documents', () => {
         });
         it(`Should return status 200 and one array with length 1`, (done) => {
             const agent = chai.request.agent(server);
+            const query = {
+                query: `{
+                    documents {
+                        _id
+                    }
+                }`
+            };
 
             agent
                 .post("/login") // to get jwtToken
@@ -281,7 +334,8 @@ describe('Documents', () => {
                 .then((res) => {
                     res.should.have.cookie('token');
                     return agent
-                        .get("/")
+                        .post("/graphql")
+                        .send(query)
                         .then((res) => {
                             res.should.have.status(200);
                             res.body.data.documents.should.have.lengthOf(1);

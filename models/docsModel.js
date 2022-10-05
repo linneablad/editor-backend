@@ -2,7 +2,7 @@ const database = require("../db/database");
 const { ObjectId } = require('mongodb');
 
 const docsModel = {
-    getDocs: async function (request, response) {
+    getDocs: async function (request) {
         const email = request.user.email;
         let db;
 
@@ -43,16 +43,16 @@ const docsModel = {
                     documents.push(doc);
                 }
             });
-            return response.json({ data: { documents: documents } });
+            return documents;
         } catch (e) {
-            return response.status(500).json({
+            return {
                 errors: {
                     status: 500,
                     source: "/",
                     title: "Database error",
                     detail: e.message
                 }
-            });
+            };
         } finally {
             await db.client.close();
         }
