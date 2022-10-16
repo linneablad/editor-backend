@@ -2,7 +2,8 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLList,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLBoolean
 } = require('graphql');
 const UserType = require("./user.js");
 
@@ -14,6 +15,7 @@ const DocumentType = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         content: { type: GraphQLString },
         owner: { type: GraphQLString },
+        code: { type: GraphQLBoolean },
         allowedUsers: { type: new GraphQLList(UserType) },
     })
 });

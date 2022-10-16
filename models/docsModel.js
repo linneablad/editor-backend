@@ -1,5 +1,8 @@
 const database = require("../db/database");
+const sgMail = require('@sendgrid/mail');
 const { ObjectId } = require('mongodb');
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const docsModel = {
     getDocs: async function (request) {
@@ -39,6 +42,7 @@ const docsModel = {
                         _id: element.docs._id,
                         name: element.docs.name,
                         content: element.docs.content,
+                        code: element.docs.code
                     };
                     documents.push(doc);
                 }
@@ -60,6 +64,7 @@ const docsModel = {
     newDoc: async function (request, response) {
         const name = request.body.name;
         const content = request.body.content;
+        const code = request.body.code;
         const email = request.user.email;
         let db;
 
@@ -73,13 +78,23 @@ const docsModel = {
                         _id: _id,
                         name: name,
                         content: content,
+                        code: code,
                         allowedUsers: []
                     }
                 }
             };
 
             await db.collection.updateOne(filter, insertDoc);
-            return response.status(201).json({ data: { _id: _id } });
+            return response.status(201).json({
+                data: {
+                    _id: _id,
+                    name: name,
+                    owner: email,
+                    content: content,
+                    code: code,
+                    allowedUsers: []
+                }
+            });
         } catch (e) {
             return response.status(500).json({
                 errors: {
@@ -98,6 +113,8 @@ const docsModel = {
         const email = request.body.email;
         const userEmail = request.user.email;
         let db;
+
+        docsModel.sendInvite(email, userEmail);
 
         try {
             db = await database.getDb();
@@ -136,7 +153,27 @@ const docsModel = {
             await db.client.close();
         }
     },
-    updateDoc: async function (_id, name, content) {
+    sendInvite: async function (toEmail, fromUserEmail) {
+        const msg = {
+            to: toEmail,
+            from: 'bladlinnea@gmail.com',
+            subject: `${fromUserEmail} has invited you to edit a document!`,
+            html: `<p>${fromUserEmail} has invited you to edit a document!</p> 
+            <p>Log in or sign up now to start editing: 
+            <a href=http://www.student.bth.se/~liba19/editor/>Log in</a></p>`,
+        };
+
+        sgMail
+            .send(msg)
+            .then((response) => {
+                console.log(response[0].statusCode);
+                console.log(response[0].headers);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    },
+    updateDoc: async function (_id, name, content, code) {
         let db = await database.getDb();
         const filter = {
             "docs": {
@@ -148,7 +185,8 @@ const docsModel = {
         const updateDoc = {
             $set: {
                 'docs.$.name': name,
-                'docs.$.content': content
+                'docs.$.content': content,
+                'docs.$.code': code
             }
         };
 

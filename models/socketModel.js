@@ -20,7 +20,7 @@ const socketModel = {
     editDoc: function (socket) {
         socket.on("editDoc", document => {
             socket.to(document._id).emit("editDoc", document);
-            docsModel.updateDoc(document._id, document.name, document.content);
+            docsModel.updateDoc(document._id, document.name, document.content, document.code);
         });
     },
     disconnect: function(socket) {
